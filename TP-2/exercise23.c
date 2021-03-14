@@ -40,7 +40,7 @@ int read_input(char *input){
     char_count = 0;
     while ( (ch = getchar()) !='\n')
         {
-            char *temp = realloc(input, char_count + 1);
+            char *temp = realloc(input, (char_count + 1)*sizeof(char));
             input = temp;
             input[char_count++] = ch;
         }
@@ -52,7 +52,7 @@ int read_input(char *input){
     return(char_count);
 }
 void text_processor(void){
-    char *input = malloc(1);
+    char *input = malloc(sizeof(char));
     int char_count;
     char **word_table;
     printf("Please give your text and press enter when you finish.\n");
