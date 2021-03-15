@@ -4,17 +4,42 @@
 #include <string.h>
 enum CASETYPE{upper = 1, lower = 0};
 
-char **break_up_string(char str[]){
-    char **words;
+void print_list_info(char **word_table, int string_count){
+    int word;
+    float summation = 0;
+    float average;
+    printf("THis is the string count %d\n", string_count);
+    for (word = 0; word<string_count; word++){
+        summation += (float) strlen(word_table[word]);
+    }
+    average = summation / string_count;
+    printf("The total number of words is %d and the average\number of letters per word is %f\n", string_count, average);
+}
+
+char **break_up_string(char str[], int *word_count){
+    char **words ;
+    char *token ;
+    int count = 0;
+    int i;
     char delim[] = " ";
+    token = strtok(str, delim);
+    do
+    {
+        words = (char**)realloc(words, (count+1)*sizeof(*words));
+        words[count] = (char*)malloc(sizeof(token));
+        strcpy(words[count], token);
+        count++;
+    } while ((token = strtok(NULL, delim))!= NULL);
+    *word_count = count;
     return(words);
+  
 }
 void change_case(char *input, int char_count){
     int i;
     enum CASETYPE selection;
     printf("Please choose if you want to change your string to lower-case(type 0) or upper-case (type 1).\n");
     scanf("%d", &selection);
-    printf("%d", selection);
+
     if(selection == upper){
         printf("you selected upper\n");
         for(i = 0; i<char_count; i++){
@@ -32,37 +57,57 @@ void change_case(char *input, int char_count){
         exit(0);
     }  
 }
+void delete_stringlist(char **matrix, int dimension){
+    int row;
+    for (row= 0; row <dimension; row++){
+        free(matrix[row]);
+    }
+    free(matrix);
+}
 
-
-int read_input(char *input){
+char *read_input( int *count_length){
     int ch;
+    int i;
+    char *input = malloc(1);
     int char_count;
     char_count = 0;
-    while ( (ch = getchar()) !='\n')
+    while ( (ch = getchar()) !='\n' && ch != EOF)
         {
-            char *temp = realloc(input, (char_count + 1)*sizeof(char));
+            char *temp = realloc(input, (char_count + 1) * 1);
             input = temp;
             input[char_count++] = ch;
         }
-
         char *temp = realloc(input, char_count + 1);
         input = temp;
         input[char_count++] = '\0';
-    free(temp);
-    return(char_count);
+
+        *count_length = char_count;
+    return(input);
 }
 void text_processor(void){
-    char *input = malloc(sizeof(char));
+    int i;
+    char *user_text = NULL;
     int char_count;
-    char **word_table;
+    int word_count;
+    char **word_table = NULL;
     printf("Please give your text and press enter when you finish.\n");
-    char_count = read_input(input);
-    printf("\nHere is what I got: %s\n", input);
-    change_case(input, char_count);
-    printf("\nHere is what I got: %s\n", input);
-    word_table = break_up_string(input);
-    free(input);
-    
+    user_text = read_input(&char_count);
+ 
+    printf("\nHere is what I got:  \n");
+       for(i = 0; i<char_count; i++){
+            putchar(user_text[i]);
+        }
+    printf("\n") ;  
+    change_case(user_text, char_count);
+    printf("\n Here is the processed text: \n") ;
+     for(i = 0; i<char_count; i++){
+            putchar(user_text[i]);
+        }
+    printf("\n") ;
+    word_table = break_up_string(user_text, &word_count);
+    print_list_info(word_table, word_count);
+    free(user_text);
+    delete_stringlist(word_table, word_count);
 }
 
 
