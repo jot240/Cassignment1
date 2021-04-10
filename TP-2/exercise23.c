@@ -10,15 +10,16 @@ void print_list_info(char **word_table, int string_count){
     float average;
     printf("THis is the string count %d\n", string_count);
     for (word = 0; word<string_count; word++){
+        printf("\n'%s' has length %d\n", word_table[word], strlen(word_table[word]));
         summation += (float) strlen(word_table[word]);
     }
-    average = summation / string_count;
+    average = summation ;
     printf("The total number of words is %d and the average\number of letters per word is %f\n", string_count, average);
 }
 
 char **break_up_string(char str[], int *word_count){
-    char **words ;
-    char *token ;
+    char **words =  NULL;
+    char *token;
     int count = 0;
     int i;
     char delim[] = " ";
@@ -28,9 +29,13 @@ char **break_up_string(char str[], int *word_count){
         words = (char**)realloc(words, (count+1)*sizeof(*words));
         words[count] = (char*)malloc(sizeof(token));
         strcpy(words[count], token);
+        printf("\n This is the word%s\n", words[count]);
         count++;
     } while ((token = strtok(NULL, delim))!= NULL);
     *word_count = count;
+      for (int word = 0; word< *word_count; word++){
+        printf("\n'%s' has length %d\n", words[word], strlen(words[word]));
+    }
     return(words);
   
 }
@@ -86,10 +91,10 @@ char *read_input( int *count_length){
 }
 void text_processor(void){
     int i;
-    char *user_text = NULL;
+    char *user_text;
     int char_count;
     int word_count;
-    char **word_table = NULL;
+    char **word_table;
     printf("Please give your text and press enter when you finish.\n");
     user_text = read_input(&char_count);
  
@@ -105,6 +110,7 @@ void text_processor(void){
         }
     printf("\n") ;
     word_table = break_up_string(user_text, &word_count);
+
     print_list_info(word_table, word_count);
     free(user_text);
     delete_stringlist(word_table, word_count);
